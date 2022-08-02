@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.student.mapper.StuUserMapper">
+
+    <resultMap type="com.stclub.student.domain.StuUser" id="StuUserResult">
+            <result property="userId" column="user_id"/>
+            <result property="college" column="college"/>
+            <result property="userName" column="user_name"/>
+            <result property="nickName" column="nick_name"/>
+            <result property="sex" column="sex"/>
+            <result property="logo" column="logo"/>
+            <result property="userAccount" column="user_account"/>
+            <result property="password" column="password"/>
+            <result property="phone" column="phone"/>
+            <result property="email" column="email"/>
+            <result property="status" column="status"/>
+            <result property="createTime" column="create_time"/>
+    </resultMap>
+
+        <select id="getStuUserList" resultType="com.stclub.student.domain.vo.StuUserVo">
+                select su.user_id, college, user_name, nick_name, sex, logo, user_account, password, phone, email, status, create_time,sc.college_name
+                from stu_user su left join stu_college sc on su.college = sc.college_id
+            <where>
+                <if test="college != null">and su.college = #{college}</if>
+                <if test="userName != null and userName != ''">and su.user_name like concat('%',#{userName},'%')</if>
+                <if test="phone != null and phone != ''">and su.phone like concat('%',#{phone},'%')</if>
+                <if test="email != null and email != ''">and su.email like concat('%',#{email},'%')</if>
+            </where>
+        </select>
+
+    <select id="getStuUserByUserId" resultType="com.stclub.student.domain.vo.StuUserVo">
+        select su.user_id, college, user_name, nick_name, sex, logo, user_account, password, phone, email, status, create_time, sc.college_name
+        from stu_user su left join stu_college sc on su.college = sc.college_id
+        where su.user_id = #{userId}
+    </select>
+
+</mapper>

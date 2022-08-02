@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.student.mapper.StuUserIdentityMapper">
+
+    <resultMap type="com.stclub.student.domain.StuUserIdentity" id="StuUserIdentityResult">
+        <result property="identityId" column="identity_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="corporationId" column="corporation_id"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="status" column="status"/>
+        <result property="joinTime" column="join_time"/>
+    </resultMap>
+
+    <select id="getStuUserIdentityList" resultType="com.stclub.student.domain.vo.StuUserIdentityVo">
+        select sui.identity_id, sui.user_id, sui.corporation_id, sui.user_status, sui.status,sui.join_time,su.user_name,cc.corporation_name,cc.corporation_code
+        from stu_user_identity sui left join stu_user su on sui.user_id = su.user_id
+        left join clu_corporation cc on sui.corporation_id = cc.corporation_id
+        <where>
+            <if test="userName != null and userName != ''">and su.user_name like concat('%',#{userName},'%')</if>
+            <if test="corporationName != null and corporationName != ''">and cc.corporation_name like concat('%',#{corporationName},'%')</if>
+        </where>
+        order by sui.corporation_id asc
+    </select>
+
+
+    <select id="getStuUserIdentityListByCorporationId" resultType="com.stclub.student.domain.vo.StuUserIdentityVo">
+        select sui.identity_id, sui.user_id, corporation_id, user_status, sui.status, join_time, su.user_name
+        from stu_user_identity sui left join stu_user su on sui.user_id = su.user_id
+        where sui.corporation_id = #{corporationId}
+        order by sui.user_status
+    </select>
+
+
+</mapper>

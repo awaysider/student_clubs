@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.ask.mapper.AskIntoInterviewMapper">
+
+    <resultMap type="com.stclub.ask.domain.AskIntoInterview" id="AskIntoInterviewResult">
+            <result property="intoInterviewId" column="into_interview_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="userName" column="user_name"/>
+            <result property="interviewTime" column="interview_time"/>
+            <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="getAskIntoInterviewList" resultType="com.stclub.ask.domain.vo.AskIntoInterviewVo">
+        select aii.into_interview_id, aii.user_id, aii.user_name, aii.interview_time, aii.status,su.user_name
+        from ask_into_interview aii left join stu_user su on aii.user_id = su.user_id
+    </select>
+
+
+</mapper>

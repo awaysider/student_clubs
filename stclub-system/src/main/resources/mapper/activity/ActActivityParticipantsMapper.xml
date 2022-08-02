@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.activity.mapper.ActActivityParticipantsMapper">
+
+    <resultMap type="com.stclub.activity.domain.ActActivityParticipants" id="ActActivityParticipantsResult">
+            <result property="participantsId" column="participants_id"/>
+            <result property="actId" column="act_id"/>
+            <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <select id="getActivityParticipantsList" resultType="com.stclub.activity.domain.vo.ActActivityParticipantsVo">
+        select acp.participants_id, acp.act_id, acp.user_id ,aa.activity_name,su.user_name,aa.activity_code
+        from act_activity_participants acp left join act_activity aa on acp.act_id = aa.act_id
+        left join stu_user su on aa.user_id = su.user_id
+        <where>
+            <if test="activityCode != null and activityCode != ''">and aa.activity_code like concat('%',#{activityCode},'%')
+            </if>
+            <if test="activityName != null and activityName != ''">and activity_name like concat('%',#{activityName},'%')</if>
+            <if test="userName != null and userName != ''">and user_name like concat('%',#{userName},'%')</if>
+        </where>
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.ask.mapper.AskSetActivityMapper">
+
+    <resultMap type="com.stclub.ask.domain.AskSetActivity" id="AskSetActivityResult">
+            <result property="setActivityId" column="set_activity_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="corporationId" column="corporation_id"/>
+            <result property="activityName" column="activity_name"/>
+            <result property="activityBudget" column="activity_budget"/>
+            <result property="maxNumber" column="max_number"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+            <result property="activityPlace" column="activity_place"/>
+            <result property="activityContent" column="activity_content"/>
+            <result property="createTime" column="create_time"/>
+            <result property="status" column="status"/>
+    </resultMap>
+
+        <select id="getAskSetActivityList" resultType="com.stclub.ask.domain.vo.AskSetActivityVo">
+                select asa.set_activity_id, asa.user_id, asa.corporation_id, activity_name, activity_budget, max_number, start_time, end_time, activity_place, activity_content, asa.status, asa.create_time,cc.corporation_name,su.user_name
+                from ask_set_activity asa left join stu_user su on asa.user_id = su.user_id
+                left join clu_corporation cc on asa.corporation_id = cc.corporation_id
+            <where>
+                <if test="corporationName != null and corporationName != ''">and cc.corporation_name like concat('%',#{corporationName},'%')
+                </if>
+                <if test="userName != null and userName != ''">and su.user_name like concat('%',#{userName},'%')
+                </if>
+                <if test="activityName != null and activityName != ''"> and asa.activity_name like concat('%',#{activityName},'%')
+                </if>
+                <if test="status != null">and asa.status = #{status}</if>
+                <if test="userId != null">and asa.user_id = #{userId}</if>
+            </where>
+            order by asa.create_time Desc
+        </select>
+
+
+</mapper>

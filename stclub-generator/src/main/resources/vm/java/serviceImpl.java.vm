@@ -1,0 +1,67 @@
+package ${packageName}.service.impl;
+
+import cn.hutool.core.bean.BeanUtil;
+    #if($table.crud || $table.sub)
+    import com.stclub.common.core.page.TableDataInfo;
+    #end
+import org.springframework.stereotype.Service;
+import com.stclub.common.core.mybatisplus.core.ServicePlusImpl;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.stclub.common.utils.StringUtils;
+import ${packageName}.domain.bo.${ClassName}Bo;
+import ${packageName}.domain.vo.${ClassName}Vo;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.service.I${ClassName}Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
+
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${ClassName}ServiceImpl extends ServicePlusImpl<${ClassName}Mapper, ${ClassName}, ${ClassName}Vo> implements I${ClassName}Service {
+
+    @Override
+    public Boolean insertByBo(${ClassName}Bo bo) {
+        ${ClassName} add = BeanUtil.toBean(bo, ${ClassName}.class);
+        validEntityBeforeSave(add);
+        boolean flag = save(add);
+        #set($pk=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        if (flag) {
+            bo.set$pk(add.get$pk());
+        }
+        return flag;
+    }
+
+    @Override
+    public Boolean updateByBo(${ClassName}Bo bo) {
+        ${ClassName} update = BeanUtil.toBean(bo, ${ClassName}.class);
+        validEntityBeforeSave(update);
+        return updateById(update);
+    }
+
+    /**
+     * 保存前的数据校验
+     *
+     * @param entity 实体类数据
+     */
+    private void validEntityBeforeSave(${ClassName} entity){
+        //TODO 做一些数据校验,如唯一约束
+    }
+
+    @Override
+    public Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids, Boolean isValid) {
+        if(isValid){
+            //TODO 做一些业务上的校验,判断是否需要校验
+        }
+        return removeByIds(ids);
+    }
+}

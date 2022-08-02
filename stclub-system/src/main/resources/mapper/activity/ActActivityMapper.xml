@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.activity.mapper.ActActivityMapper">
+
+    <resultMap type="com.stclub.activity.domain.ActActivity" id="ActActivityResult">
+        <result property="actId" column="act_id"/>
+        <result property="activityCode" column="activity_code"/>
+        <result property="userId" column="user_id"/>
+        <result property="corporationId" column="corporation_id"/>
+        <result property="activityName" column="activity_name"/>
+        <result property="activityBudget" column="activity_budget"/>
+        <result property="maxNumber" column="max_number"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="activityPlace" column="activity_place"/>
+        <result property="activityContent" column="activity_content"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+        <select id="getList" resultType="com.stclub.activity.domain.vo.ActActivityVo">
+                select aa.act_id, aa.user_id, aa.corporation_id, activity_name, activity_budget, max_number, start_time, end_time, activity_place, activity_content,su.user_name,corporation_name,activity_code,aa.status
+                from act_activity aa left join stu_user su on aa.user_id = su.user_id
+            left join clu_corporation cc on aa.corporation_id = cc.corporation_id
+            <where>
+                <if test="activityCode != null and activityCode != ''">and aa.activity_code like concat('%',#{activityCode},'%')</if>
+                <if test="userName != null and userName != ''">and su.user_name like concat('%',#{userName},'%')
+                </if>
+                <if test="corporationName != null and corporationName != ''">and cc.corporation_name like concat('%',#{corporationName},'%')</if>
+                <if test="activityName != null and activityName != ''">and aa.activity_name like concat('%',#{activityName},'%')
+                </if>
+                <if test="activityPlace != null and activityPlace != ''">and activity_place like concat('%',#{activityPlace},'%')</if>
+            </where>
+            order by aa.start_time DESC
+        </select>
+
+
+    <select id="getActivityList" resultType="com.stclub.activity.domain.vo.ActActivityVo">
+        select aa.act_id, aa.user_id, aa.corporation_id, activity_name, activity_budget, max_number, start_time, end_time, activity_place, activity_content,su.user_name,corporation_name,activity_code,aa.status
+        from act_activity  aa left join stu_user su on aa.user_id = su.user_id
+        left join clu_corporation cc on aa.corporation_id = cc.corporation_id
+        left join stu_user_identity sui on aa.corporation_id = sui.corporation_id
+        where sui.user_id = #{userId}
+    </select>
+
+    <select id="getActivityListByUserId" resultType="com.stclub.activity.domain.vo.ActActivityVo">
+        select aa.act_id, aa.user_id, aa.corporation_id, activity_name, activity_budget, max_number, start_time, end_time, activity_place, activity_content,su.user_name,corporation_name,activity_code,aa.status
+        from act_activity  aa left join stu_user su on aa.user_id = su.user_id
+        left join clu_corporation cc on aa.corporation_id = cc.corporation_id
+        left join act_activity_participants aap on aa.act_id = aap.act_id
+        <where>
+            aap.user_id = #{userId}
+            <if test="activityCode != null and activityCode != ''">and aa.activity_code like concat('%',#{activityCode},'%')</if>
+            <if test="userName != null and userName != ''">and su.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="corporationName != null and corporationName != ''">and cc.corporation_name like concat('%',#{corporationName},'%')</if>
+            <if test="activityName != null and activityName != ''">and aa.activity_name like concat('%',#{activityName},'%')
+            </if>
+            <if test="activityPlace != null and activityPlace != ''">and activity_place like concat('%',#{activityPlace},'%')</if>
+            <if test="status != 0"> and aa.status = #{status}</if>
+        </where>
+        order by aa.start_time DESC
+    </select>
+
+
+    
+
+
+</mapper>

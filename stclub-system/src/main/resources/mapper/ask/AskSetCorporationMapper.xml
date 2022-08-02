@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.ask.mapper.AskSetCorporationMapper">
+
+    <resultMap type="com.stclub.ask.domain.AskSetCorporation" id="AskSetCorporationResult">
+        <result property="setCorporationId" column="set_corporation_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="corporationName" column="corporation_name"/>
+        <result property="logo" column="logo"/>
+        <result property="corporationSlogan" column="corporation_slogan"/>
+        <result property="corporationTypeId" column="corporation_type_id"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+    </resultMap>
+
+    <select id="getAskSetCorporationList" resultType="com.stclub.ask.domain.vo.AskSetCorporationVo">
+        select `asc`.set_corporation_id, asc.user_id, corporation_name, corporation_slogan, corporation_type_id, `asc`.status, reason,su.user_name,cct.type_name,`asc`.logo
+        from ask_set_corporation `asc` left join stu_user su on `asc`.user_id = su.user_id
+        left join clu_corporation_type cct on `asc`.corporation_type_id = cct.coporation_type_id
+        <where>
+            <if test="userName != null and userName != ''">su.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="corporationName != null and corporationName != ''">and `asc`.corporation_name like concat('%',#{corporationName},'%')
+            </if>
+            <if test="corporationTypeId != null"> and `asc`.corporation_type_id =#{corporationTypeId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

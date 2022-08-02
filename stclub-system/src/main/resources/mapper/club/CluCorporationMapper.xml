@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.club.mapper.CluCorporationMapper">
+
+    <resultMap type="com.stclub.club.domain.CluCorporation" id="CluCorporationResult">
+        <result property="corporationId" column="corporation_id"/>
+        <result property="typeId" column="type_id"/>
+        <result property="corporationCode" column="corporation_code"/>
+        <result property="corporationName" column="corporation_name"/>
+        <result property="logo" column="logo"/>
+        <result property="slogan" column="slogan"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="number" ofType="java.lang.Long" column="{corporationId = corporation_id}" select="getNumber" />
+    </resultMap>
+
+    <select id="getCorporationList" resultType="com.stclub.club.domain.vo.CluCorporationVo">
+        select cc.corporation_id, type_id, corporation_name,cc.logo, number, slogan, create_time,cct.type_name,cc.corporation_code
+        from clu_corporation cc left join clu_corporation_type cct on cc.type_id = cct.coporation_type_id
+        <where>
+            <if test="corporationCode != null and corporationCode != ''">and cc.corporation_code like concat('%',#{corporationCode},'%')</if>
+            <if test="corporationName!= null and corporationName!=''">and cc.corporation_name like concat('%',#{corporationName},'%') </if>
+            <if test="typeId != null">and cc.type_id = #{typeId}</if>
+        </where>
+    </select>
+
+    <select id="getNewNumber" resultMap="CluCorporationResult">
+        select cc.corporation_id, corporation_code, type_id, corporation_name, logo, number, slogan, create_time
+        from clu_corporation cc
+    </select>
+
+    <select id="getNumber" resultType="java.lang.Long">
+        select count(*)
+        from stu_user_identity
+        where corporation_id = #{corporationId}
+    </select>
+
+    <select id="getUserClubList" resultType="com.stclub.club.domain.vo.CluCorporationVo">
+        select cc.corporation_id, corporation_code, type_id, corporation_name, logo, number, slogan, create_time,sui.join_time,sui.user_status,cct.type_name
+        from clu_corporation cc left join stu_user_identity sui on cc.corporation_id = sui.corporation_id
+            left join clu_corporation_type cct on cc.type_id = cct.coporation_type_id
+        where sui.user_id = #{userId}
+        and sui.status = 0
+    </select>
+
+    <select id="getUserNoInClubList" resultType="com.stclub.club.domain.vo.CluCorporationVo">
+        select cc.corporation_id, corporation_code, type_id, corporation_name, logo, number, slogan, create_time, cct.type_name
+        from clu_corporation cc left join clu_corporation_type cct  on cc.type_id = cct.coporation_type_id
+        where cc.corporation_id not in (
+            select sui.corporation_id
+            from stu_user_identity sui
+            where sui.user_id =#{userId}
+        )
+    </select>
+
+    <select id="getUserNoInClubByCorporationList" resultType="com.stclub.club.domain.vo.CluCorporationVo">
+        select cc.corporation_id, corporation_code, type_id, corporation_name, logo, number, slogan, create_time, cct.type_name
+        from clu_corporation cc left join clu_corporation_type cct  on cc.type_id = cct.coporation_type_id
+        <where>
+            <if test="corporationCode != null and corporationCode !=''">and cc.corporation_code like concat('%',#{corporationCode},'%') </if>
+            <if test="corporationName != null and corporationName !='' ">and cc.corporation_name like concat('%',#{corporationName},'%')
+            </if>
+            <if test="typeId != null ">and cc.type_id = #{typeId}
+            </if>
+            and cc.corporation_id not in (
+            select sui.corporation_id
+            from stu_user_identity sui
+            where sui.user_id =#{userId}
+            )
+        </where>
+    </select>
+
+    <select id="getClubPresident" resultType="com.stclub.student.domain.vo.StuUserVo">
+        select ss.user_id, college, user_name, nick_name, sex, logo, user_account, password, phone, email, sui.status, create_time,sc.college_name
+        from stu_user ss left join stu_user_identity sui on ss.user_id = sui.user_id
+        left join stu_college sc on ss.college = sc.college_id
+        where sui.corporation_id = #{corporationId} and sui.user_status = 0 and sui.status = 0
+    </select>
+
+    <select id="getUserCorporationList" resultType="com.stclub.club.domain.vo.CluCorporationVo">
+        select cc.corporation_id, corporation_code, type_id, corporation_name, logo, number, slogan, create_time
+        from clu_corporation cc left join stu_user_identity sui on cc.corporation_id = sui.corporation_id
+        where sui.user_id = #{userId}
+    </select>
+
+    <select id="getClubActivityList" resultType="com.stclub.activity.domain.vo.ActActivityVo">
+        select act_id, activity_code, user_id, corporation_id, activity_name, activity_budget, max_number, start_time, end_time, activity_place, activity_content,status
+        from act_activity
+        where corporation_id = #{corporationId} and status != 3
+    </select>
+
+</mapper>

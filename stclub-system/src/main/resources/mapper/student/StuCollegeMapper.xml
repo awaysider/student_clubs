@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stclub.student.mapper.StuCollegeMapper">
+
+    <resultMap type="com.stclub.student.domain.StuCollege" id="StuCollegeResult">
+            <result property="collegeId" column="college_id"/>
+            <result property="collegeName" column="college_name"/>
+    </resultMap>
+
+
+</mapper>
